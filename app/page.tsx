@@ -17,6 +17,22 @@ type GuessResult = {
   alternatives: string[];
 };
 
+function getTroubleshootingHint(errorMessage: string) {
+  if (errorMessage.includes("GEMINI_API_KEY")) {
+    return "Server is missing GEMINI_API_KEY. Add it to .env.local and restart npm run dev.";
+  }
+
+  if (errorMessage.toLowerCase().includes("quota")) {
+    return "Gemini API quota may be exhausted. Check your Google AI Studio usage and billing settings.";
+  }
+
+  if (errorMessage.toLowerCase().includes("permission")) {
+    return "Gemini API key might be invalid or lacks permission for the configured model.";
+  }
+
+  return "Check terminal logs and browser Network tab for /api/guess response details.";
+}
+
 const colors = ["#111827", "#ef4444", "#f97316", "#eab308", "#22c55e", "#0ea5e9", "#6366f1"];
 const sizes = [4, 8, 12, 18, 26];
 
@@ -280,6 +296,7 @@ export default function Home() {
             </div>
           )}
           {error ? <p className="error">{error}</p> : null}
+          {error ? <p className="error">{getTroubleshootingHint(error)}</p> : null}
         </aside>
       </section>
     </main>
